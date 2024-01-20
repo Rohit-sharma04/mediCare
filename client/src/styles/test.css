@@ -1,0 +1,22 @@
+.test {
+ 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: "";
+  outline: none;
+}
+
+select {
+    -webkit-appearance: none !important;
+    -moz-appearance: none!important;
+    text-indent: 1px;
+    text-overflow: '';
+    outline: none;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 3px 5px;
+  }
+  select::-ms-expand {
+    display: none;
+  }
