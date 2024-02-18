@@ -6,7 +6,8 @@ import { deleteSlot } from "./helper.js";
 export const bookAppointmnet = async (data) => {
     try {
         const { doctorId, userId, date, time,userName,doctorName } = data;
-        const newAppointment = new appointmentModel({ data });
+        const newAppointment = new appointmentModel({ doctorId, userId, date, 
+            time,userName,doctorName });
         await newAppointment.save();
 
         //remove choosen slot 
