@@ -99,7 +99,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
       const paymentIntentSucceeded = event.data.object;
       console.log("paymentIntentSucceeded = ", paymentIntentSucceeded)
       // Retrieve Checkout session ID from Payment Intent's metadata
-      const checkoutSessionId = paymentIntentSucceeded.metadata.checkout_session_id;
+      const checkoutSessionId = paymentIntentSucceeded.metadata;
       console.log("-------------------------")
       console.log("data here = ", checkoutSessionId)
       console.log("-------------------------")

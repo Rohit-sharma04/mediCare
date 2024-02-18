@@ -3,7 +3,7 @@ import stripe from 'stripe';
 export const createCheckoutSessionController = async (req, res) => {
     try {
         const stripeClient = new stripe(process.env.STRIPE_SECRET_KEY);
-        const { name, fees, doctorId,userId,doctorInfo,userInfo,date,time } = req.body;
+        const { name, fees, doctorId, userId, doctorInfo, userInfo, date, time } = req.body;
 
         const paymentAmount = fees * 100;
 
@@ -24,23 +24,24 @@ export const createCheckoutSessionController = async (req, res) => {
                 },
             ],
             mode: 'payment',
-            success_url: process.env.CLIENT_URL+'/paymentSuccess',
-            cancel_url: process.env.CLIENT_URL+'/paymentFailed',
-            metadata: {
-                appointmentDetails: JSON.stringify({
+            success_url: process.env.CLIENT_URL + '/paymentSuccess',
+            cancel_url: process.env.CLIENT_URL + '/paymentFailed',
+
+            payment_intent_data: {
+                metadata: {
+                    // appointmentDetails: JSON.stringify({
                     doctorId,
                     userId,
                     // doctorInfo,
                     // userInfo,
                     date,
                     time
-                }),
-            },
-
-
+                    // }),
+                }
+            }
         });
         console.log("sessionId", session);
-        res.json({  session });
+        res.json({ session });
         // res.redirect(303, session.url);
     } catch (error) {
         console.error(error);
