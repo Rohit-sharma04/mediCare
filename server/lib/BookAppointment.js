@@ -8,17 +8,21 @@ export const bookAppointmnet = async (data) => {
         const { doctorId, userId, date, time,userName,doctorName } = data;
         const newAppointment = new appointmentModel({ doctorId, userId, date, 
             time,userName,doctorName });
+            
         await newAppointment.save();
 
-        //remove choosen slot 
         const doctor = await doctorModel.findOne({ _id: doctorId }).populate('slots');
 
-        doctor.notification.push({
-            type: "New-appointment-request",
-            message: `A new Appointment Request from ${userName}`,
-            onCLickPath: "/user/appointments",
+        //userId of doctor
+        const user = await userModel.findOne({ _id: doctor.userId });
+        user.notification.push({
+          type: "New-appointment-request",
+          message: `A new Appointment Request from ${userName}`,
+          onCLickPath: "/user/appointments",
         });
-
+        await user.save();
+        //remove choosen slot 
+    
         await deleteSlot(doctor.slots, date, time)
         await doctor.save();
         /** these steps are not needed */

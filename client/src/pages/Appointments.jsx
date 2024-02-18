@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
-import moment from "moment";
 import noData from "../assets/noData.svg"
 const Appointments = () => {
   const [appointments, setAppointments] = useState([]);
