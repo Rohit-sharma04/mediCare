@@ -26,7 +26,7 @@ dotenv.config()
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 //mongodb connection
-await connectDB();
+await connectDB(); 
 
 //cloudinary config 
 configCloudinary()
