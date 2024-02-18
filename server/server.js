@@ -55,13 +55,13 @@ io.use((socket, next) => {
   const { headers } = socket.request;
   const cookies = headers.cookie;
   // console.log(cookies)
-  const tokenCookieString = cookies.split(';').find(str => str.trim().startsWith('token='));
-  const token = tokenCookieString.split('=')[1].trim();
-  const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+  const tokenCookieString = cookies?.split(';').find(str => str.trim().startsWith('token='));
+  const token = tokenCookieString?.split('=')[1].trim();
+  const payload = JSON.parse(Buffer.from(token?.split('.')[1], 'base64').toString());
   console.log("payload",payload)
-  console.log(payload.id)
-  socket.Id=payload.id;
-  socket.username=payload.userName;
+  console.log(payload?.id)
+  socket.Id=payload?.id;
+  socket.username=payload?.userName;
   return next()
 })
 

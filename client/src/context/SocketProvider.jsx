@@ -8,7 +8,7 @@ const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:8080", {
+    const newSocket = io("https://my-medicare-backend.onrender.com", {
       withCredentials: true,
       reconnection: true,
     });
