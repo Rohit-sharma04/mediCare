@@ -6,23 +6,31 @@ import { showLoading, hideLoading } from "../redux/features/alertSlice";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { convertBase64 } from "../lib/helper";
+import { useState } from "react";
+import userAvatar from '../assets/userAvatar.jpg';
+
 const ApplyDoctor = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { user } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [profilePic, setProfilePic] = useState(userAvatar);
   // const [certificate,setCertificate]=useState([])
 
   //handle form
   const handleFinish = async (values) => {
     try {
-      const certificate=[];
-      for(let certi in values.certificates){
+      const certificate = [];
+      for (let certi of values.certificates) {
         const base64 = await convertBase64(certi);
         certificate.push(base64)
       }
-      console.log("certi",certificate)
+      console.log("cirtificate", certificate)
+
+      //add certificate  in form
+      values.certificates = certificate;
+
       console.log("form values", values)
       console.log("from", [values.hourFrom + ':' + values.minutesFrom + values.ampmFrom,
       values.hourTo + ':' + values.minutesTo + values.ampmTo])
@@ -31,20 +39,20 @@ const ApplyDoctor = () => {
       ['hourFrom', 'minutesFrom', 'ampmFrom', 'hourTo', 'minutesTo', 'ampmTo'].forEach((e) => delete newValues[e])
 
       //about is also deleted for now
-      delete newValues['about']
-    
+      // delete newValues['about']
+
       console.log("new vslues", newValues)
       dispatch(showLoading());
       const res = await axios.post(
         "/api/v1/user/apply-doctor",
         {
           ...newValues,
+          profilePic:profilePic,
           userId: user._id,
           timings: [
             values.hourFrom + ':' + values.minutesFrom + " " + values.ampmFrom,
             values.hourTo + ':' + values.minutesTo + " " + values.ampmTo
           ],
-
         },
         {
           headers: {
@@ -66,14 +74,13 @@ const ApplyDoctor = () => {
     }
   };
 
-  // const handleSelectFile = async (event) => {
-  //   const file = event.target.files[0];
-  //   console.log(file)
-  //   const base64 = await convertBase64(file);
-  //   console.log(base64)
-  //   setCertificate(base64)
-
-  // }
+  const handleSelectFile = async (event) => {
+    const file = event.target.files[0];
+    console.log(file)
+    const base64 = await convertBase64(file);
+    // console.log(base64)
+    setProfilePic(base64)
+  }
 
   return (
     <>
@@ -89,11 +96,30 @@ const ApplyDoctor = () => {
               <div className="flex-auto px-4 py-10 pt-0 lg:px-10">
                 <form onSubmit={handleSubmit(handleFinish)}>
                   <h6 className="mb-6 mt-3 text-sm font-bold uppercase text-slate-400">User Information</h6>
+                  <div className="w-full px-4 lg:w-6/12">
+                      <div className="relative mb-3 w-full">
+                      <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > Profile pic *</label>
+                        <div className="flex items-center">
+                          {user?.profilePic ? <div className="mr-4 h-12 w-12 flex-none overflow-hidden rounded-xl border">
+                            <img className="mr-4 h-12 w-12 object-cover" id="imgInp" src={user.profilePic} alt="Avatar Upload" />
+                          </div> : <div className="mr-4 h-12 w-12 flex-none overflow-hidden rounded-xl border">
+                            <img className="mr-4 h-12 w-12 object-cover" id="imgInp" src={profilePic} alt="Avatar Upload" />
+                          </div>}
 
+                          <label className="cursor-pointer">
+                            <span className="rounded-full bg-green-400 px-4 py-2 text-sm text-white hover:bg-green-500 hover:shadow-lg focus:outline-none">Browse</span>
+                            <input type="file" className="hidden"
+                              onChange={handleSelectFile}
+                              required
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
                   <div className="flex flex-wrap">
                     <div className="w-full px-4 lg:w-6/12">
                       <div className="relative mb-3 w-full">
-                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > Email address </label>
+                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > Email address *</label>
                         <input
                           type="email"
                           {...register('email', { required: true })}
@@ -102,7 +128,7 @@ const ApplyDoctor = () => {
                     </div>
                     <div className="w-full px-4 lg:w-6/12">
                       <div className="relative mb-3 w-full">
-                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > First Name </label>
+                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > First Name *</label>
                         <input type="text"
                           {...register('firstName', { required: true })}
                           className="w-full rounded border-0 bg-white px-3 py-3 text-sm shadow-sm transition-all duration-150 ease-linear focus:outline-none focus:ring" placeholder="Lucky" />
@@ -110,7 +136,7 @@ const ApplyDoctor = () => {
                     </div>
                     <div className="w-full px-4 lg:w-6/12">
                       <div className="relative mb-3 w-full">
-                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > Last Name </label>
+                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > Last Name *</label>
                         <input type="text"
                           {...register('lastName', { required: true })}
                           className="w-full rounded border-0 bg-white px-3 py-3 text-sm shadow-sm transition-all duration-150 ease-linear focus:outline-none focus:ring" placeholder="Jesse" />
@@ -125,7 +151,7 @@ const ApplyDoctor = () => {
                   <div className="flex flex-wrap">
                     <div className="lg:w-12/12 w-full px-4">
                       <div className="relative mb-3 w-full">
-                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > Address </label>
+                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > Address *</label>
                         <input type="text"
                           {...register('address', { required: true })}
                           className="w-full rounded border-0 bg-white px-3 py-3 text-sm shadow-sm transition-all duration-150 ease-linear focus:outline-none focus:ring" placeholder="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09" />
@@ -141,7 +167,7 @@ const ApplyDoctor = () => {
                     </div>
                     <div className="w-full px-4 lg:w-4/12">
                       <div className="relative mb-3 w-full">
-                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > phone number </label>
+                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > phone number *</label>
                         <input type="text"
                           {...register('phone', { required: true })}
                           className="w-full rounded border-0 bg-white px-3 py-3 text-sm shadow-sm transition-all duration-150 ease-linear focus:outline-none focus:ring" placeholder="9123456780" />
@@ -158,7 +184,7 @@ const ApplyDoctor = () => {
                   <div className="flex flex-wrap">
                     <div className="w-full px-4 lg:w-4/12">
                       <div className="relative mb-3 w-full">
-                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > specialization </label>
+                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > specialization *</label>
                         <input type="text"
                           {...register('specialization', { required: true })}
                           className="w-full rounded border-0 bg-white px-3 py-3 text-sm shadow-sm transition-all duration-150 ease-linear focus:outline-none focus:ring" placeholder="Neurology" />
@@ -166,15 +192,15 @@ const ApplyDoctor = () => {
                     </div>
                     <div className="w-full px-4 lg:w-4/12">
                       <div className="relative mb-3 w-full">
-                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > experience </label>
+                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > experience *</label>
                         <input type="text"
                           {...register('experience', { required: true })}
-                          className="w-full rounded border-0 bg-white px-3 py-3 text-sm shadow-sm transition-all duration-150 ease-linear focus:outline-none focus:ring" placeholder="www.google.com" />
+                          className="w-full rounded border-0 bg-white px-3 py-3 text-sm shadow-sm transition-all duration-150 ease-linear focus:outline-none focus:ring" placeholder="5 years" />
                       </div>
                     </div>
                     <div className="w-full px-4 lg:w-4/12">
                       <div className="relative mb-3 w-full">
-                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > fees per consultation </label>
+                        <label className="mb-2 block text-xs font-bold uppercase text-gray-600" > fees per consultation *</label>
                         <input type="number"
                           {...register('feesPerCunsaltation', { required: true })}
                           className="w-full rounded border-0 bg-white px-3 py-3 text-sm shadow-sm focus:outline-none focus:ring" placeholder="500" />
@@ -280,11 +306,11 @@ const ApplyDoctor = () => {
                   <div className="flex flex-wrap">
                     <div className="lg:w-12/12 w-full px-4">
                       <div className="relative mb-3 w-full">
-                        <label className=" text-gray-900  mb-2 block text-xs font-bold uppercase" htmlFor="multiple_files">Upload your certificates</label>
+                        <label className=" text-gray-900  mb-2 block text-xs font-bold uppercase" htmlFor="multiple_files">Upload your certificates *</label>
                         <input className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white  shadow-sm transition-all duration-150 ease-linear focus:outline-none focus:ring" id="multiple_files" type="file" multiple
-                        {...register('certificates', { required: true })} 
+                          {...register('certificates', { required: true })}
                         />
-                        <p className="mt-1 text-xs text-gray-500 " id="file_input_help">SVG, PNG, JPG (MAX. 800x400px).</p>
+                        <p className="mt-1 text-xs text-gray-500 " id="file_input_help">SVG, PNG, JPG.</p>
                       </div>
                     </div>
                   </div>

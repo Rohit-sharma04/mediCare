@@ -20,3 +20,6 @@ select {
   select::-ms-expand {
     display: none;
   }
+  /* body{
+    overflow: hidden;
+  } */

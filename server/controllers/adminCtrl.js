@@ -41,15 +41,18 @@ export const getAllDoctorsController = async (req, res) => {
 // doctor account status
 export const changeAccountStatusController = async (req, res) => {
   try {
-    const { doctorId, status, timeFrom, timeTo } = req.body;
+    const { doctorId, userIdofDoctor,status, timeFrom, timeTo } = req.body;
     console.log("doctor record", doctorId, status, timeFrom, timeTo)
-    
+
     const generatedSlots = generateSlot(timeFrom, timeTo);
     const slotIds = await Promise.all(generatedSlots.map(slot => new slotModel(slot).save().then(savedSlot => savedSlot._id)));
 
 
-    const doctor = await doctorModel.findByIdAndUpdate(doctorId, { status, slots: slotIds });
-    const user = await userModel.findOne({ _id: doctor.userId });
+    const doctor = await doctorModel.updateOne({_id:doctorId}, { status, slots: slotIds });
+    console.log("doc",doctor)
+    const user = await userModel.findOne({ _id: userIdofDoctor });
+   console.log("user",user)
+
     const notification = user.notification;
     notification.push({
       type: "doctor-account-request-updated",
@@ -77,4 +80,36 @@ export const changeAccountStatusController = async (req, res) => {
   }
 };
 
+
+export const deleteDoctorAccountController = async (req, res) => {
+  try {
+    const { doctorId ,userIdofDoctor} = req.body;
+    console.log("userId",userIdofDoctor)
+    console.log("delete req",req.body)
+    const doc=await doctorModel.deleteOne({_id:doctorId });
+   console.log(doc) 
+    const user = await userModel.findOne({ _id: userIdofDoctor });
+    console.log("user",user)  
+    const notification = user.notification;
+    notification.push({
+      type: "doctor-account-request-updated",
+      message: `Your Doctor Account Request is rejected `,
+      onClickPath: "/notification",
+    });
+    user.isDoctor = false;
+    await user.save();
+
+    res.status(201).send({
+      success: true,
+      message: "Account Status Updated",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Eror in Account Status",
+      error,
+    });
+  }
+}
 

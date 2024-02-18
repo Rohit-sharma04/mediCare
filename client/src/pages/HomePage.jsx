@@ -8,9 +8,9 @@ const HomePage = () => {
   const [searchText, setSearchText] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
-
+  const [specialization,setSpecialization]=useState("")
   // login user data
-  const getUserData = async (firstName = "", lastName = "", specialization = "") => {
+  const getDoctorsData = async (firstName = "", lastName = "", specialization = "") => {
     try {
 
       const res = await axios.post(
@@ -45,13 +45,13 @@ const HomePage = () => {
       const firstName1 = NewsearchText.slice(0, NewsearchText.length);
       setFirstName(firstName1)
       setLastName("")
-      return getUserData(firstName, lastName)
+      return getDoctorsData(firstName, lastName)
     }
     const firstName1 = NewsearchText.slice(0, indexOfSpace);
     const lastName1 = NewsearchText.slice(indexOfSpace + 1);
     setFirstName(firstName1)
     setLastName(lastName1)
-    getUserData(firstName, lastName)
+    getDoctorsData(firstName, lastName)
   }
 
   const toggleDropdown = () => {
@@ -61,15 +61,18 @@ const HomePage = () => {
 
   const handleFilter = (e) => {
     console.log(e.target.outerText)
-    const specialization = e.target.outerText
-    getUserData(firstName, lastName, specialization);
+    let specialization1 = e.target.outerText
+    if(specialization1==='All') specialization1='';
+    setSpecialization(specialization1)
+    getDoctorsData(firstName, lastName, specialization1);
     toggleDropdown()
   }
   useEffect(() => {
-    getUserData();
+    getDoctorsData();
   }, []);
 
   const medicalSpecializations = [
+    "All",
     "Dentistry",
     "Neurology",
     "Dermatology",
@@ -100,13 +103,10 @@ const HomePage = () => {
   return (
     <Layout>
       <>
-        <h1 className="text-center my-3">Home Page</h1>
-
-
-        <div className="flex  ">
+        <div className="flex flex-wrap justify-center items-center ">
           {/* search */}
           <form>
-            <div className="container flex justify-center items-center max-w-90 px-4 sm:px-6 lg:px-8">
+            <div className="container flex justify-center items-center max-w-90 px-4 sm:px-6 lg:px-8 mb-2">
               <div className="relative">
 
                 <input type="search" name="search"
@@ -119,13 +119,14 @@ const HomePage = () => {
                 </div>
               </div>
 
-              <button className="inline-flex items-center py-2.5 px-3 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="submit" onClick={handleSearch}>search</button>
+              <button className="inline-flex items-center py-2.5 px-3 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 " type="submit" onClick={handleSearch}>search</button>
             </div>
           </form>
 
           {/* dropdown */}
           <div className="relative">
-            <div id="dropdown-button" onClick={toggleDropdown} className="flex w-48 cursor-pointer select-none justify-between rounded border border-solid border-gray-400 bg-white px-5 py-2 shadow-md">Options
+            <div id="dropdown-button" onClick={toggleDropdown} className="flex w-48 cursor-pointer select-none justify-between rounded border border-solid border-gray-400 bg-white px-5 py-2 shadow-md"> 
+            {specialization.length ?specialization:"Select"}
               <i className="fa-solid fa-angle-down flex items-center "></i>
             </div>
 
@@ -139,7 +140,7 @@ const HomePage = () => {
         </div>
 
 
-        <div className="flex flex-wrap justify-center md:justify-start py-8">
+        <div className="flex flex-wrap justify-center md:justify-start py-8 ">
           {doctors && doctors.map((doctor) => <DoctorList key={doctor._id} doctor={doctor} />)}
         </div>
       </>

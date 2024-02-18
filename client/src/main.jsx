@@ -6,15 +6,18 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import axios from 'axios';
 import App from './App.jsx';
-
+import "./styles/test.css"
+import SocketProvider from './context/SocketProvider.jsx';
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 
-  <Provider store={store}>
+  <Provider store={store} >
     <React.StrictMode>
+      <SocketProvider>
         <App />
+      </SocketProvider>
     </React.StrictMode>
   </Provider>
 )

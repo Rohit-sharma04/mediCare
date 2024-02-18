@@ -29,9 +29,11 @@ const doctorSchema = new Schema(
     phone: {
       type: String,
       required: [true, "phone no is required"],
+      unique: true,
     },
     email: {
       type: String,
+      unique:true,
       required: [true, "email is required"],
     },
     website: {
@@ -60,6 +62,17 @@ const doctorSchema = new Schema(
     timings: {
       type: Object,
       required: [true, "wrok timing is required"],
+    },
+    profilePic:{
+      type:String,
+      default:""
+    },
+    certificates:{
+      type:[String],
+      required:[true, "certificates are required"],
+    },
+    about:{
+      type:String,
     },
     slots: [{ type: Schema.Types.ObjectId, ref: 'slots' }], // Add the slots section with the slotSchema
   },

@@ -89,7 +89,7 @@ const OTPPage = () => {
                                         </div>
 
                                         <div className="flex flex-row items-center justify-center text-center text-sm font-medium space-x-1 text-gray-500">
-                                            <p>Didn&apos;t recieve code?</p> <a className="flex flex-row items-center text-blue-600" href="http://" target="_blank" rel="noopener noreferrer">Resend</a>
+                                            <p>Didn&apos;t recieve code?</p> <div className="flex flex-row items-center text-blue-600">Resend</div>
                                         </div>
                                     </div>
                                 </div>

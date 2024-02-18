@@ -9,27 +9,28 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
 import 'moment-timezone';
-
+// import { loadStripe } from '@stripe/stripe-js';
+// import {useStripe} from '@stripe/react-stripe-js'
 const BookingPage = () => {
   const { user } = useSelector((state) => state.user);
   const params = useParams();
   const [doctor, setDoctor] = useState({});
   const [date, setDate] = useState(new Date());
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [buttonValue,setButtonValue]=useState('');
-
+  const [buttonValue, setButtonValue] = useState('');
+  // const stripe =useStripe();
   const dispatch = useDispatch();
 
   console.log("doctor", doctor)
   console.log("user", user)
   console.log("availableSlot", availableSlots)
-  console.log("date",date)
+  console.log("date", date)
   // selected doctor data
-console.log(moment.tz(new Date(), "Asia/Kolkata").format())
+  console.log(moment.tz(new Date(), "Asia/Kolkata").format())
 
   const getDoctorData = async () => {
     try {
-
+      console.log(params.doctorId)
       const res = await axios.post(
         "/api/v1/doctor/getDoctorById",
         { doctorId: params.doctorId },
@@ -76,43 +77,114 @@ console.log(moment.tz(new Date(), "Asia/Kolkata").format())
     }
 
   };
+
   // =============== booking func
   const handleBooking = async () => {
     try {
-         
-      if (!date && !buttonValue) {
-        return alert("Date & Time Required");
+      if (!user) {
+        return message.error("User must be logged in")
+      }
+      if (!date || !buttonValue) {
+        console.log(" Time Required")
+        return alert(" Time Required");
       }
       dispatch(showLoading());
-      const res = await axios.post(
-        "/api/v1/user/book-appointment",
+
+      // Create a checkout session with Stripe
+      const sessionResponse= await axios.post(
+        '/api/v1/stripe/create-checkout-session',
         {
+          name: doctor.firstName + doctor.lastName,
+          date: date.toDateString(),
+          time: buttonValue,
+          fees: doctor.feesPerCunsaltation,
           doctorId: params.doctorId,
           userId: user._id,
           doctorInfo: doctor,
-          userInfo: user,
-          date: date.toDateString(),
-          time: buttonValue,
+          userInfo: user,   
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );
-      dispatch(hideLoading());
-      if (res.data.success) {
-        message.success(res.data.message);
+      // const result = stripe.redirectToCheckout({
+      //   sessionId: sessionResponse.data.sessionId,
+      // });
+
+      // Redirect to Stripe Checkout
+      if (sessionResponse.data.session.url) {
+        window.location.href = sessionResponse.data.session.url;
       }
+      // if (sessionResponse.error) {
+      //   console.error(sessionResponse.error);
+      //   message.error('Error during payment');
+      // } 
+      // else{
+      //   message.success("Appointment Booked Successfully");
+      // }
+      //else {
+      // Payment successful, make the backend request to book the appointment
+      // const res = await axios.post(
+      //   '/api/v1/user/book-appointment',
+      //   {
+      //     doctorId: params.doctorId,
+      //     userId: user._id,
+      //     doctorInfo: doctor,
+      //     userInfo: user,
+      //     date: date.toDateString(),
+      //     time: buttonValue,
+      //     // paymentIntentId: result.paymentIntent.id,
+      //   },
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${localStorage.getItem('token')}`,
+      //     },
+      //   }
+      // );
+
+
+
+
+
+      
+
+
+
+      // dispatch(hideLoading());
+
+
+
+
+
+
+
+
+
+
+      // if (res.data.session.url) {
+      //   window.location.href = res.data.session.url;
+      // }
+      // if (res.data.success) {
+      //   message.success(res.data.message);
+      // } else {
+      //   message.error(res.data.message);
+      // }
+      // }
+
     } catch (error) {
       dispatch(hideLoading());
       console.log(error);
     }
   };
- const handleButton=(e)=>{
+
+  const handleButton = (e) => {
     console.log(e.target.textContent)
+    console.log(date)
     setButtonValue(e.target.textContent)
- }
+    console.log(buttonValue)
+  }
   useEffect(() => {
     getDoctorData();
     // eslint-disable-next-line
@@ -120,19 +192,25 @@ console.log(moment.tz(new Date(), "Asia/Kolkata").format())
 
   return (
     <Layout>
-      <h3>Booking Page</h3>
-      <div className="container m-2">
-        {doctor && (
-          <div>
-            <h4>
-              Dr.{doctor.firstName} {doctor.lastName}
-            </h4>
-            <h4>Fees : {doctor.feesPerCunsaltation}</h4>
-            <h4>
-              Timings : {doctor.timings && doctor.timings[0]} -{" "}
-              {doctor.timings && doctor.timings[1]}{" "}
-            </h4>
+      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-3">
+        <div className="md:flex">
+          <div className="md:flex-shrink-0">
+            {doctor?.profilePic ? <img className="h-48 md:w-48 w-full md:h-auto p-3 md:rounded-full object-cover "
+              src={doctor?.profilePic} alt="Doctor's image" /> :
+              <img className="h-48 md:w-48 w-full md:h-auto p-3 md:rounded-full object-cover "
+                src="https://hips.hearstapps.com/hmg-prod/images/portrait-of-a-happy-young-doctor-in-his-clinic-royalty-free-image-1661432441.jpg?crop=0.66698xw:1xh;center,top&resize=1200:*" alt="Doctor's image" />
+            }
+
+          </div>
+          <div className="px-8 pt-3 ">
+            <div className="uppercase tracking-wide text-lg text-indigo-500 font-semibold"> Dr.{doctor?.firstName} {doctor?.lastName}</div>
+            <p className="block mt-1  text-black">Specialty: {doctor?.specialization}</p>
+            <p className="block mt-1  text-black"> Timings : {doctor?.timings && doctor?.timings[0]} -{" "}
+              {doctor?.timings && doctor?.timings[1]}{" "}</p>
+            <p className="block mt-1  text-black">Fees: {doctor?.feesPerCunsaltation}</p>
             <div className="flex flex-col ">
+
+              <p className="mt-2 text-gray-500">Select Date:</p>
 
               <DatePicker
                 showIcon
@@ -142,30 +220,28 @@ console.log(moment.tz(new Date(), "Asia/Kolkata").format())
                 minDate={new Date()}
                 maxDate={(new Date()).setDate((new Date()).getDate() + 30)}
               />
-
-
               <button
-                className="text-white bg-blue-400 hover:bg-blue-500  focus:ring-4  font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 max-w-56"
+                className="text-white mt-2 bg-blue-400 hover:bg-blue-500  focus:ring-4  font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 max-w-56"
                 onClick={handleAvailability}
               >
                 show Available Slots
               </button>
-              <div className="flex flex-wrap">
+              <div className="flex flex-wrap ">
                 {availableSlots?.length > 0 && availableSlots.map((slot) => (
                   <button
                     key={slot}
                     type="button"
-                    className="text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-4 focus:ring-yellow-700 font-medium rounded-full text-sm px-3 py-2.5 text-center me-2 mb-2 dark:focus:ring-yellow-900" onClick={handleButton}>{slot}</button>
+                    className="text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-4 focus:ring-yellow-700 font-medium rounded-full text-sm px-3 py-2.5 text-center me-2 mb-2 " onClick={(e) => handleButton(e)}>{slot}</button>
                 ))}
               </div>
-              <button className="text-white bg-green-400 hover:bg-green-500  font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 max-w-56"
-                onClick={handleBooking}
-              >
+              <button className="text-white mt-2 bg-green-400 hover:bg-green-500  font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 max-w-56"
+                onClick={handleBooking}>
                 Book Now
               </button>
+
             </div>
           </div>
-        )}
+        </div>
       </div>
     </Layout>
   );

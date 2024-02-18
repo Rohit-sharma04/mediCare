@@ -13,3 +13,7 @@ export const handleUpload = async (file) => {
         { folder: "docApp" });
     return res;
 }
+export const handleDelete=async (file)=>{
+    const res= await cloudinary.uploader.destroy(file)
+    return res;
+}

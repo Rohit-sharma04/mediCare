@@ -45,3 +45,23 @@ export const adminMenu = [
     icon: "fa-solid fa-user",
   },
 ];
+
+ // =========== doctor menu ===============
+export const doctorMenu = [
+  {
+    name: "Home",
+    path: "/",
+    icon: "fa-solid fa-house",
+  },
+  {
+    name: "Appointments",
+    path: "/doctor-appointments",
+    icon: "fa-solid fa-list",
+  },
+
+  {
+    name: "Profile",
+    path: '/doctor/profile',
+    icon: "fa-solid fa-user",
+  },
+];

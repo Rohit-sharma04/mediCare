@@ -13,6 +13,7 @@ import {
   forgotPasswordController,
   verifyOTPController,
   resetPasswordController,
+  updateProfileController,
 } from "../controllers/userCtrl.js";
 
 import authMiddleware from "../middlewares/authMiddleware.js";
@@ -47,7 +48,7 @@ router.post(
 );
 
 //GET ALL DOC
-router.post("/getAllDoctors", authMiddleware, getAllDocotrsController);
+router.post("/getAllDoctors", getAllDocotrsController);
 
 //BOOK APPOINTMENT
 router.post("/book-appointment", authMiddleware, bookeAppointmnetController);
@@ -55,7 +56,7 @@ router.post("/book-appointment", authMiddleware, bookeAppointmnetController);
 //Booking Avliability
 router.post(
   "/booking-availbility",
-  authMiddleware,
+  // authMiddleware,
   bookingAvailabilityController
 );
 
@@ -69,4 +70,8 @@ router.post("/forgot-password", forgotPasswordController);
 router.post("/verify-otp",verifyOTPController);
 
 router.patch("/reset-password",resetPasswordController);
+
+//update user profile
+router.patch("/update-profile",authMiddleware,updateProfileController);
+
 export default router;

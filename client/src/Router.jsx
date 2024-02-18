@@ -2,8 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import ProtectedRoute from "./components/ProtectedRoute";
-import PublicRoute from "./components/PublicRoute";
+import ProtectedRoute from "./components/Routes/ProtectedRoute";
+import PublicRoute from "./components/Routes/PublicRoute";
 import ApplyDoctor from "./pages/ApplyDoctor";
 import NotificationPage from "./pages/NotificationPage";
 import Users from "./pages/admin/Users";
@@ -15,15 +15,20 @@ import DoctorAppointments from "./pages/doctor/DoctorAppointments";
 import ForgetPassword from "./pages/ForgetPasswordPage";
 import OTPPage from "./pages/OTPPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
-import UpdateProfile from "./pages/doctor/updateProfile";
+import UserProfile from "./pages/UserProfile";
+import NotFoundPage from "./pages/NotFoundPage";
+import DoctorProtectedRoute from "./components/Routes/DoctorProtectedRoute";
+import AdminProtectedRoute from "./components/Routes/AdminProtectedRoute";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import PaymentFailedPage from "./pages/PaymentFailedPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <ProtectedRoute>
+      // <ProtectedRoute>
         <HomePage />
-      </ProtectedRoute>
+      // </ProtectedRoute>
     )
   },
   {
@@ -98,6 +103,14 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     )
   },
+  {
+    path: "/profile",
+    element: (
+      <ProtectedRoute>
+        <UserProfile />
+      </ProtectedRoute>
+    )
+  },
   //admin route can be accessed by any logged in user
   {
     path: "admin",
@@ -105,18 +118,18 @@ export const router = createBrowserRouter([
       {
         path: "users",
         element: (
-          <ProtectedRoute>
+          <AdminProtectedRoute>
             <Users />
-          </ProtectedRoute>
+          </AdminProtectedRoute>
         )
       },
 
       {
         path: "doctors",
         element: (
-          <ProtectedRoute>
+          <AdminProtectedRoute>
             <Doctors />
-          </ProtectedRoute>
+          </AdminProtectedRoute>
         )
       },
 
@@ -126,30 +139,35 @@ export const router = createBrowserRouter([
     path: "doctor",
     children: [
       {
-        path: "profile/:id",
+        path: "profile",
         element: (
-          <ProtectedRoute>
+          <DoctorProtectedRoute>
             <Profile />
-          </ProtectedRoute>
-        )
-      },
-      {
-        path: "updateProfile/:id",
-        element: (
-          <ProtectedRoute>
-            <UpdateProfile />
-          </ProtectedRoute>
+          </DoctorProtectedRoute>
         )
       },
       {
         path: "book-appointment/:doctorId",
         element: (
-          <ProtectedRoute>
+          // <ProtectedRoute>
             <BookingPage />
-          </ProtectedRoute>
+          // </ProtectedRoute>
         )
       },
     ]
 
   },
+      //  paymentSuccess
+  {    
+    path:"paymentSuccess",
+    element:<PaymentSuccessPage/>
+  },
+  {
+    path:"paymentFailed",
+    element:<PaymentFailedPage/>
+  },
+  {
+    path:"*",
+    element:<NotFoundPage/>,
+  }
 ]);

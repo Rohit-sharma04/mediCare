@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { getAllUsersController, getAllDoctorsController, changeAccountStatusController } from "../controllers/adminCtrl.js";
+import { getAllUsersController, getAllDoctorsController, changeAccountStatusController, deleteDoctorAccountController } from "../controllers/adminCtrl.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
+import adminAuthMiddleware from "../middlewares/adminAuthMiddleware.js";
 
 const router = Router();
 
@@ -13,8 +14,15 @@ router.get("/getAllDoctors", authMiddleware, getAllDoctorsController);
 //POST ACCOUNT STATUS
 router.post(
   "/changeAccountStatus",
-  authMiddleware,
+  // adminAuthMiddleware,
   changeAccountStatusController
 );
 
+// delete doctor account
+router.post(
+  "/deleteDoctorAccount",
+  //  adminAuthMiddleware,
+  deleteDoctorAccountController
+);
+ 
 export default router;

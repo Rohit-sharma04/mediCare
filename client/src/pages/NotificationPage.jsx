@@ -1,13 +1,14 @@
 import Layout from "../components/Layout";
-import { message, Tabs } from "antd";
+import { message} from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { showLoading, hideLoading } from "../redux/features/alertSlice";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useState } from "react";
 
 const NotificationPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [tab, setTab] = useState("inbox")
+
   const { user } = useSelector((state) => state.user);
   //   handle read notification
   const handleMarkAllRead = async () => {
@@ -64,46 +65,54 @@ const NotificationPage = () => {
   };
   return (
     <Layout>
-      <h4 className="p-3 text-center">Notification Page</h4>
-      <Tabs>
-        <Tabs.TabPane tab="unRead" key={0}>
-          <div className="d-flex justify-content-end">
+      <div className="mb-4 border-b border-gray-200 ">
+        <ul className="flex flex-wrap -mb-px text-sm font-medium text-center">
+          <li className="me-2" >
+            <button className={`inline-block p-4 border-b-2 rounded-t-lg hover:text-blue-400 ${tab==='inbox'&&" text-blue-600 border-blue-600 "}`} onClick={() => setTab("inbox")}
+            >Inbox</button>
+          </li>
+          <li className="me-2" >
+            <button className={`inline-block p-4 border-b-2 rounded-t-lg hover:text-blue-400 ${tab==='archive'&&"text-blue-600 border-blue-600 "}`} onClick={() => setTab("archive")}>Archive</button>
+          </li>
+        </ul>
+      </div>
+
+      <div >
+        {tab == "inbox" ? <div className="">
+        <div className="flex justify-end">
             <h4 className="p-2 text-blue-500 cursor-pointer" onClick={handleMarkAllRead}>
-              Mark All Read
+              Move to Archive
             </h4>
           </div>
-          {user?.notification.map((notificationMgs,index) => (
-            <div key={index} className="card" style={{ cursor: "pointer" }}>
+          {user?.notification.map((notificationMgs, index) => (
+            <div key={index} className="cursor-pointer" >
               <div
-                className="card-text"
-                onClick={() => navigate(notificationMgs.onClickPath)}
-              >
+                className="text-sm text-gray-500 p-3 my-2 rounded-lg bg-gray-50" >
                 {notificationMgs.message}
               </div>
             </div>
           ))}
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="Read" key={1}>
-          <div className="d-flex justify-content-end">
+          
+        </div> :
+          <div id="archive" className="">
+          <div className="flex justify-end">
             <h4
               className="p-2 text-blue-500 cursor-pointer"
-              onClick={handleDeleteAllRead}
-            >
-              Delete All Read
+              onClick={handleDeleteAllRead}>
+              Delete All
             </h4>
           </div>
-          {user?.seennotification.map((notificationMgs,index) => (
-            <div key={index} className="card" style={{ cursor: "pointer" }}>
+          {user?.seennotification.map((notificationMgs, index) => (
+            <div key={index} className="cursor-pointer" >
               <div
-                className="card-text"
-                onClick={() => navigate(notificationMgs.onClickPath)}
-              >
+                className="text-sm text-gray-500 p-3 my-2 rounded-lg bg-gray-50">
                 {notificationMgs.message}
               </div>
             </div>
           ))}
-        </Tabs.TabPane>
-      </Tabs>
+          </div>
+        }
+      </div>
     </Layout>
   );
 };

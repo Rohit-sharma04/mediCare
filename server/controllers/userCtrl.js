@@ -12,28 +12,28 @@ import { sendEmail } from "../config/email.js";
 //register callback
 export const registerController = async (req, res) => {
   try {
-    console.log(req.body) 
+    console.log(req.body)
     console.log(req.body.email)
- 
+
     const exisitingUser = await userModel.findOne({ email: req.body.email });
     if (exisitingUser) {
       return res
         .status(200)
         .send({ message: "User Already Exist", success: false });
     }
-    let cloudinaryImg="";
-    if(req.body.profilePic){
+    let cloudinaryImg = "";
+    if (req.body.profilePic) {
       const cloudImage = await handleUpload(req.body.profilePic);
       console.log(cloudImage.url)
-      cloudinaryImg=cloudImage.url;
+      cloudinaryImg = cloudImage.url;
     }
 
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     req.body.password = hashedPassword;
-    req.body.profilePic=cloudinaryImg;
-    
+    req.body.profilePic = cloudinaryImg;
+
     const newUser = new userModel(req.body);
     await newUser.save();
     res.status(201).send({ message: "Register Sucessfully", success: true });
@@ -62,7 +62,7 @@ export const loginController = async (req, res) => {
         .send({ message: "Invlid EMail or Password", success: false });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id ,userName:user.name}, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
     res.status(200).send({ message: "Login Success", success: true, token });
@@ -76,13 +76,14 @@ export const loginController = async (req, res) => {
 export const authController = async (req, res) => {
   try {
     const user = await userModel.findById({ _id: req.body.userId });
-    user.password = undefined;
+    
     if (!user) {
       return res.status(200).send({
         message: "user not found",
         success: false,
       });
     } else {
+      user.password = undefined;
       res.status(200).send({
         success: true,
         data: user,
@@ -101,9 +102,28 @@ export const authController = async (req, res) => {
 // Appply DOctor CTRL
 export const applyDoctorController = async (req, res) => {
   try {
-    console.log(req.body)
+    console.log("apply doctor", req.body)
+
+    if (req.body.profilePic) {
+      const cloudImage = await handleUpload(req.body.profilePic);
+      console.log(cloudImage.url)
+      req.body.profilePic = cloudImage.url;
+    }
+
+
+    if (req.body.certificates.length) {
+      const certificate = [];
+      for (let certi of req.body.certificates) {
+        const cloudImage = await handleUpload(certi);
+        console.log(cloudImage.url)
+        certificate.push(cloudImage.url)
+      }
+      req.body.certificates = certificate;
+    }
+
     const newDoctor = await doctorModel({ ...req.body, status: "pending" });
     await newDoctor.save();
+    console.log(newDoctor)
     const adminUser = await userModel.findOne({ isAdmin: true });
     const notification = adminUser.notification;
     notification.push({
@@ -211,6 +231,33 @@ export const bookeAppointmnetController = async (req, res) => {
     const time = req.body.time;
     console.log("date", date)
     console.log("time", time)
+    
+      // const { name, date, time,fees } = req.body;
+
+    // const paymentAmount = fees*100; 
+
+    // Create a checkout session with Stripe
+    // const session = await stripeClient.checkout.sessions.create({
+    //   payment_method_types: ['card'],
+    //   line_items: [
+    //     {
+    //       price_data: {
+    //         currency: 'inr',
+    //         product_data: {
+    //             name: `Doctor Appointment - Test`, 
+    //             description: `Appointment on ${date} at ${time}`
+    //         },
+    //         unit_amount: 100*100,
+    //       },
+    //       quantity: 1,
+    //     },
+    //   ],
+    //   mode: 'payment',
+    //   success_url: 'http://localhost:5173/paymentSuccess',
+    //   cancel_url: 'http://localhost:5173/paymentFailed',
+    // });
+
+
     req.body.status = "pending";
     const newAppointment = new appointmentModel(req.body);
     await newAppointment.save();
@@ -218,7 +265,7 @@ export const bookeAppointmnetController = async (req, res) => {
     const user = await userModel.findOne({ _id: req.body.doctorInfo.userId });
     user.notification.push({
       type: "New-appointment-request",
-      message: `A nEw Appointment Request from ${req.body.userInfo.name}`,
+      message: `A new Appointment Request from ${req.body.userInfo.name}`,
       onCLickPath: "/user/appointments",
     });
     await user.save();
@@ -235,6 +282,7 @@ export const bookeAppointmnetController = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "Appointment Book succesfully",
+      session
     });
   } catch (error) {
     console.log(error);
@@ -413,6 +461,33 @@ export const resetPasswordController = async (req, res) => {
       success: false,
       error,
       message: 'Error resetting password'
+    });
+  }
+}
+
+//update user profile 
+export const updateProfileController = async (req, res) => {
+  try {
+    console.log(req.body)
+
+    if (req.body.profilePic) {
+      const cloudImage = await handleUpload(req.body.profilePic);
+      console.log(cloudImage.url)
+      req.body.profilePic = cloudImage.url;
+    }
+
+    const { name, userId, profilePic = '' } = req.body;
+    const user = await userModel.updateOne({ _id: userId }, { $set: { name: name, profilePic: profilePic } });
+    console.log(user)
+    res.status(200).send({
+      success: true,
+      message: 'Updated successfully'
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      error,
+      message: 'Error something went wrong'
     });
   }
 }

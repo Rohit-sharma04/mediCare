@@ -42,8 +42,8 @@ export const generateSlot = (startTime, endTime) => {
     });
     startDate.setDate(startDate.getDate() + 1); // Move to the next day
   }
-  console.log("availableHours ", "startTime ", startTime, "endTime ", endTime)
-  console.log("generated slotes", slots)
+  // console.log("availableHours ", "startTime ", startTime, "endTime ", endTime)
+  // console.log("generated slotes", slots)
   return slots;
 }
 
