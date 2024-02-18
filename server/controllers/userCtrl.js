@@ -62,7 +62,7 @@ export const loginController = async (req, res) => {
         .send({ message: "Invlid EMail or Password", success: false });
     }
 
-    const token = jwt.sign({ id: user._id ,userName:user.name}, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id, userName: user.name }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
     res.status(200).send({ message: "Login Success", success: true, token });
@@ -76,7 +76,7 @@ export const loginController = async (req, res) => {
 export const authController = async (req, res) => {
   try {
     const user = await userModel.findById({ _id: req.body.userId });
-    
+
     if (!user) {
       return res.status(200).send({
         message: "user not found",
@@ -231,7 +231,7 @@ export const bookeAppointmnetController = async (req, res) => {
     const time = req.body.time;
     console.log("date", date)
     console.log("time", time)
-    
+
     req.body.status = "pending";
     const newAppointment = new appointmentModel(req.body);
     await newAppointment.save();
@@ -305,9 +305,7 @@ export const bookingAvailabilityController = async (req, res) => {
 //user appointment list
 export const userAppointmentsController = async (req, res) => {
   try {
-    const appointments = await appointmentModel.find({
-      userId: req.body.userId,
-    }).populate('doctorInfo');
+    const appointments = await appointmentModel.find({userId: req.body.userId});
     res.status(200).send({
       success: true,
       message: "Users Appointments Fetch SUccessfully",

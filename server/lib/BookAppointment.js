@@ -5,17 +5,16 @@ import { deleteSlot } from "./helper.js";
 
 export const bookAppointmnet = async (data) => {
     try {
-        const { doctorId, userId, date, time } = data;
-        const newAppointment = new appointmentModel({ doctorId, userId, date, time });
+        const { doctorId, userId, date, time,userName,doctorName } = data;
+        const newAppointment = new appointmentModel({ data });
         await newAppointment.save();
 
-        const user = await userModel.findOne({ _id: userId });
         //remove choosen slot 
         const doctor = await doctorModel.findOne({ _id: doctorId }).populate('slots');
 
         doctor.notification.push({
             type: "New-appointment-request",
-            message: `A new Appointment Request from ${user.name}`,
+            message: `A new Appointment Request from ${userName}`,
             onCLickPath: "/user/appointments",
         });
 

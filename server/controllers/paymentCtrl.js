@@ -3,7 +3,7 @@ import stripe from 'stripe';
 export const createCheckoutSessionController = async (req, res) => {
     try {
         const stripeClient = new stripe(process.env.STRIPE_SECRET_KEY);
-        const { name, fees, doctorId, userId, doctorInfo, userInfo, date, time } = req.body;
+        const { fees, doctorId, userId, userName,doctorName, date, time } = req.body;
 
         const paymentAmount = fees * 100;
 
@@ -15,7 +15,7 @@ export const createCheckoutSessionController = async (req, res) => {
                     price_data: {
                         currency: 'inr',
                         product_data: {
-                            name: `Doctor Appointment - ${name}`,
+                            name: `Doctor Appointment - ${doctorName}`,
                             description: `Appointment on ${date} at ${time}`
                         },
                         unit_amount: paymentAmount,
@@ -29,14 +29,12 @@ export const createCheckoutSessionController = async (req, res) => {
 
             payment_intent_data: {
                 metadata: {
-                    // appointmentDetails: JSON.stringify({
                     doctorId,
                     userId,
-                    // doctorInfo,
-                    // userInfo,
+                    userName,
+                    doctorName,
                     date,
                     time
-                    // }),
                 }
             }
         });

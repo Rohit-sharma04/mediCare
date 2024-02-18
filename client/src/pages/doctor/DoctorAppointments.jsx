@@ -3,9 +3,6 @@ import Layout from "../../components/Layout";
 import noData from '../../assets/noData.svg'
 import axios from "axios";
 
-// import moment from "moment";
-import { message } from "antd";
-
 const DoctorAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   console.log(appointments)
@@ -28,7 +25,7 @@ const DoctorAppointments = () => {
     getAppointments();
   }, []);
 
- 
+
 
   return (
     <Layout>
@@ -101,9 +98,7 @@ const DoctorAppointments = () => {
               <th scope="col" className="px-6 py-3">
                 Status
               </th>
-              {/* <th scope="col" className="px-6 py-3">
-                Action
-              </th> */}
+
             </tr>
           </thead>
           <tbody>
@@ -119,16 +114,14 @@ const DoctorAppointments = () => {
                   <tr key={appointment._id} className="bg-white border-b  hover:bg-gray-50 ">
 
                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-                      {appointment.userInfo.name}
+                      {appointment.userName}
                     </th>
                     <td className="px-6 py-4">
                       {`${appointment.date} ${appointment.time}`}
                     </td>
-                    
+
                   </tr>)
               })}
-
-
           </tbody>
         </table>
       </div>

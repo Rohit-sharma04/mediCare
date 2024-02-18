@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 import moment from "moment";
-import { Table } from "antd";
 import noData from "../assets/noData.svg"
 const Appointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -96,7 +95,7 @@ const Appointments = () => {
                 Date & Time
               </th>
               <th scope="col" className="px-6 py-3">
-                Status
+                Call
               </th>
 
             </tr>
@@ -113,15 +112,14 @@ const Appointments = () => {
                 return (
                   <tr key={appointment._id} className="bg-white border-b  hover:bg-gray-50 ">
                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-                      Dr. {appointment.doctorInfo.firstName} {appointment.doctorInfo.lastName}
+                      Dr. {appointment.doctorName}
                     </th>
                     <td className="px-6 py-4">
                       {`${appointment.date} ${appointment.time}`}
                     </td>
                     <td className="px-6 py-4">
-                     button
+                       call
                     </td>
-
                   </tr>)
               })}
           </tbody>

@@ -94,12 +94,14 @@ const BookingPage = () => {
       const sessionResponse= await axios.post(
         '/api/v1/stripe/create-checkout-session',
         {
-          name: doctor.firstName + doctor.lastName,
+          doctorName: doctor.firstName + doctor.lastName,
+          userName:user.name, 
           date: date.toDateString(),
           time: buttonValue,
           fees: doctor.feesPerCunsaltation,
           doctorId: params.doctorId,
-          userId: user._id,  
+          userId: user._id,
+        
         },
         {
           headers: {
