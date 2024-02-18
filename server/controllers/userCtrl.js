@@ -232,32 +232,6 @@ export const bookeAppointmnetController = async (req, res) => {
     console.log("date", date)
     console.log("time", time)
     
-      // const { name, date, time,fees } = req.body;
-
-    // const paymentAmount = fees*100; 
-
-    // Create a checkout session with Stripe
-    // const session = await stripeClient.checkout.sessions.create({
-    //   payment_method_types: ['card'],
-    //   line_items: [
-    //     {
-    //       price_data: {
-    //         currency: 'inr',
-    //         product_data: {
-    //             name: `Doctor Appointment - Test`, 
-    //             description: `Appointment on ${date} at ${time}`
-    //         },
-    //         unit_amount: 100*100,
-    //       },
-    //       quantity: 1,
-    //     },
-    //   ],
-    //   mode: 'payment',
-    //   success_url: 'http://localhost:5173/paymentSuccess',
-    //   cancel_url: 'http://localhost:5173/paymentFailed',
-    // });
-
-
     req.body.status = "pending";
     const newAppointment = new appointmentModel(req.body);
     await newAppointment.save();

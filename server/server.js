@@ -15,6 +15,7 @@ import { ScheduleAppointments } from "./lib/ScheduleAppointments.js";
 import Stripe from "stripe";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { bookAppointmnet } from "./lib/BookAppointment.js";
 
 const job = schedule.scheduleJob('0 0 1 * *', function () {
   ScheduleAppointments()
@@ -26,7 +27,7 @@ dotenv.config()
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 //mongodb connection
-await connectDB(); 
+await connectDB();
 
 //cloudinary config 
 configCloudinary()
@@ -37,7 +38,7 @@ nodeMailerConfig()
 //rest obejct 
 const app = express();
 const httpServer = createServer(app);
-                                       
+
 //cors
 app.use(cors({
   origin: [process.env.CLIENT_URL]
@@ -70,13 +71,10 @@ io.on("connection", (socket) => {
 })
 
 //middlewares
-
-// app.use(express.raw({ type: 'application/json' }));
 app.use(moragan("dev"));
 
 const endpointSecret = process.env.ENDPOINT_SECRET;
-// express.raw({ type: 'application/json' })
-// app.use(express.raw({ type: 'application/json'})),
+
 app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
 
@@ -92,24 +90,15 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
   // Handle the event
   switch (event.type) {
     case 'payment_intent.succeeded':
-      // const paymentIntentSucceeded = event.data.object;
-      // const checkoutSessionId = paymentIntentSucceeded.payment_intent;
-      // const checkoutSession = await stripe.checkout.sessions.retrieve(checkoutSessionId);
-
       const paymentIntentSucceeded = event.data.object;
       console.log("paymentIntentSucceeded = ", paymentIntentSucceeded)
-      // Retrieve Checkout session ID from Payment Intent's metadata
-      const checkoutSessionId = paymentIntentSucceeded.metadata;
-      console.log("-------------------------")
-      console.log("data here = ", checkoutSessionId)
-      console.log("-------------------------")
-      // Use the retrieved Checkout session ID to retrieve the session
-      // const checkoutSession = await stripe.checkout.sessions.retrieve(checkoutSessionId);
-      console.log("payment is done, book the appointment")
-      console.log("-------------------------")
-      // console.log("event = ",checkoutSession.metadata)
-      console.log("-------------------------")
-      // Then define and call a function to handle the event payment_intent.succeeded
+      const checkoutSessionData = paymentIntentSucceeded.metadata;
+      console.log("data here = ", checkoutSessionData)
+      try {
+        await bookAppointmnet(checkoutSessionData)
+      } catch (error) {
+        console.log('Error in booking appointment : ', error)
+      }
       break;
     // ... handle other event types
     default:

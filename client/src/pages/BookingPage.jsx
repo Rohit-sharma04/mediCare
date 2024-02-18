@@ -86,7 +86,7 @@ const BookingPage = () => {
       }
       if (!date || !buttonValue) {
         console.log(" Time Required")
-        return alert(" Time Required");
+        return message.error(" Time Required");
       }
       dispatch(showLoading());
 
@@ -99,9 +99,7 @@ const BookingPage = () => {
           time: buttonValue,
           fees: doctor.feesPerCunsaltation,
           doctorId: params.doctorId,
-          userId: user._id,
-          doctorInfo: doctor,
-          userInfo: user,   
+          userId: user._id,  
         },
         {
           headers: {
@@ -109,69 +107,10 @@ const BookingPage = () => {
           },
         }
       );
-      // const result = stripe.redirectToCheckout({
-      //   sessionId: sessionResponse.data.sessionId,
-      // });
-
-      // Redirect to Stripe Checkout
+  
       if (sessionResponse.data.session.url) {
         window.location.href = sessionResponse.data.session.url;
       }
-      // if (sessionResponse.error) {
-      //   console.error(sessionResponse.error);
-      //   message.error('Error during payment');
-      // } 
-      // else{
-      //   message.success("Appointment Booked Successfully");
-      // }
-      //else {
-      // Payment successful, make the backend request to book the appointment
-      // const res = await axios.post(
-      //   '/api/v1/user/book-appointment',
-      //   {
-      //     doctorId: params.doctorId,
-      //     userId: user._id,
-      //     doctorInfo: doctor,
-      //     userInfo: user,
-      //     date: date.toDateString(),
-      //     time: buttonValue,
-      //     // paymentIntentId: result.paymentIntent.id,
-      //   },
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${localStorage.getItem('token')}`,
-      //     },
-      //   }
-      // );
-
-
-
-
-
-      
-
-
-
-      // dispatch(hideLoading());
-
-
-
-
-
-
-
-
-
-
-      // if (res.data.session.url) {
-      //   window.location.href = res.data.session.url;
-      // }
-      // if (res.data.success) {
-      //   message.success(res.data.message);
-      // } else {
-      //   message.error(res.data.message);
-      // }
-      // }
 
     } catch (error) {
       dispatch(hideLoading());
