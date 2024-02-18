@@ -74,7 +74,7 @@ io.on("connection", (socket) => {
 // app.use(express.raw({ type: 'application/json' }));
 app.use(moragan("dev"));
 
-const endpointSecret = 'whsec_1695975043edc9710f7691e5403029df115317f155c86968e0d3085bb3f452c7';
+const endpointSecret = process.env.ENDPOINT_SECRET;
 // express.raw({ type: 'application/json' })
 // app.use(express.raw({ type: 'application/json'})),
 app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
