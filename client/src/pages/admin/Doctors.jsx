@@ -112,7 +112,7 @@ const Doctors = () => {
                 </li>
                 <li>
                   <div className="flex items-center p-2 rounded hover:bg-gray-100 ">
-                    <input checked="" id="filter-radio-example-2" type="radio" value="" name="filter-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500  focus:ring-2 " />
+                    <input defaultChecked="" id="filter-radio-example-2" type="radio" value="" name="filter-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500  focus:ring-2 " />
                     <label htmlFor="filter-radio-example-2" className="w-full ms-2 text-sm font-medium text-gray-900 rounded ">Last 7 days</label>
                   </div>
                 </li>
