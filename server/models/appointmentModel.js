@@ -18,6 +18,10 @@ const appointmentSchema = new Schema(
       type: String,
       required: true,
     },
+    doctorUserId:{
+      type: String,
+      required: true,
+    },
     date: {
       type: String,
       required: true,
