@@ -101,7 +101,7 @@ const BookingPage = () => {
           fees: doctor.feesPerCunsaltation,
           doctorId: params.doctorId,
           userId: user._id,
-        
+          doctorUserId:doctor.userId,
         },
         {
           headers: {

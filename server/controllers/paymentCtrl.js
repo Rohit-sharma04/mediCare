@@ -3,7 +3,7 @@ import stripe from 'stripe';
 export const createCheckoutSessionController = async (req, res) => {
     try {
         const stripeClient = new stripe(process.env.STRIPE_SECRET_KEY);
-        const { fees, doctorId, userId, userName,doctorName, date, time } = req.body;
+        const { fees, doctorId, userId, userName,doctorName, date, time ,doctorUserId} = req.body;
 
         const paymentAmount = fees * 100;
 
@@ -34,7 +34,8 @@ export const createCheckoutSessionController = async (req, res) => {
                     userName,
                     doctorName,
                     date,
-                    time
+                    time,
+                    doctorUserId
                 }
             }
         });

@@ -5,10 +5,10 @@ import { deleteSlot } from "./helper.js";
 
 export const bookAppointmnet = async (data) => {
     try {
-        const { doctorId, userId, date, time,userName,doctorName } = data;
+        const { doctorId, userId, date, time,userName,doctorName ,doctorUserId} = data;
         const newAppointment = new appointmentModel({ doctorId, userId, date, 
-            time,userName,doctorName });
-            
+            time,userName,doctorName,doctorUserId });
+
         await newAppointment.save();
 
         const doctor = await doctorModel.findOne({ _id: doctorId }).populate('slots');
