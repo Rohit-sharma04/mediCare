@@ -21,7 +21,7 @@ import DoctorProtectedRoute from "./components/Routes/DoctorProtectedRoute";
 import AdminProtectedRoute from "./components/Routes/AdminProtectedRoute";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import PaymentFailedPage from "./pages/PaymentFailedPage";
-
+import Room from "./pages/Room"; 
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -165,6 +165,10 @@ export const router = createBrowserRouter([
   {
     path:"paymentFailed",
     element:<PaymentFailedPage/>
+  },
+  {
+    path:"/room/:callerId/:receiverId",
+    element:<Room/>
   },
   {
     path:"*",

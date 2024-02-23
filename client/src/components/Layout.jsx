@@ -4,10 +4,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { message } from "antd";
 import userAvatar from "../assets/userAvatar.jpg";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import logo from "../assets/mediCareLogo.jpg"
 import axios from "axios";
 import { setUser } from "../redux/features/userSlice";
+
+import { SocketContext } from '../context/SocketProvider';
+// id===socket.id
 
 const Layout = ({ children }) => {
   const dispatch = useDispatch();
@@ -15,6 +18,41 @@ const Layout = ({ children }) => {
   const[isSidebarOpen,setIsSidebarOpen]=useState(false);
 
   const { user } = useSelector((state) => state.user);
+
+  const [showModel, setShowModel] = useState(false);
+  const [callerId, setCallerId] = useState(null);
+  const [callerName, setCallerName] = useState(null);
+  const [receiverId, setReceiverId] = useState(null);
+  const socket = useContext(SocketContext)
+  // const { username, id, setId, setUsername } = useContext(UserContext);
+
+
+  const handleIncomming = (data) => {
+    setShowModel(true)
+    console.log("toggeled  -----")
+    const { callerName, callerId, receiverId } = data;
+    setCallerId(callerId);
+    setCallerName(callerName);
+    setReceiverId(receiverId);
+    // alert(`${callerName} is calling `)
+  }
+  const handleCallAccepted = () => {
+    socket.emit("receiver:joinedRoom", ({callerId, receiverId}))
+    navigate(`/room/${callerId}/${receiverId}`)
+  } 
+
+  useEffect(()=>{
+    if (socket) {
+      socket.on('connect', () => {
+        console.log(`myself ${socket.id}`);
+      });
+
+      socket.on("calling", handleIncomming)
+    }
+    return () => {
+      // socket.off("calling", handleIncomming)
+    }
+  },[socket])
 
   //eslint-disable-next-line
   const getUser = async () => {
@@ -172,6 +210,36 @@ const Layout = ({ children }) => {
           <div className="">{children}</div>
         </div>
       </div>
+
+      {/* calling model */}
+      {showModel &&
+        <div className="relative z-1000">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex  min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                  <div className="sm:flex sm:items-start">
+                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                      <h3 className="text-base font-semibold leading-6 text-gray-900" id="modal-title">{callerName} is calling</h3>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">A patient needs your help.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 px-4  py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                  <button type="button" className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto"
+                    onClick={handleCallAccepted}
+                  >Accept</button>
+                  {/* TODO: ALSO CUT CALL FROM CALLER SIDE */}
+                  <button type="button" className="mt-3 inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-red-500 sm:mt-0 sm:w-auto" onClick={() => setShowModel(false)}>Reject</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
     </>
   );
 

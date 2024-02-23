@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Layout from "../components/Layout";
 import noData from "../assets/noData.svg"
+import { useNavigate } from "react-router-dom";
+
 const Appointments = () => {
   const [appointments, setAppointments] = useState([]);
-
+  const navigate =useNavigate();
   const getAppointments = async () => {
     try {
       const res = await axios.get("/api/v1/user/user-appointments", {
@@ -19,6 +21,11 @@ const Appointments = () => {
       console.log(error);
     }
   };
+
+  const handleClick = (appointment) => {
+    console.log(appointment)
+    navigate(`/room/${appointment.userId}/${appointment.doctorUserId}`)
+  }
 
   useEffect(() => {
     getAppointments();
@@ -50,7 +57,7 @@ const Appointments = () => {
                 </li>
                 <li>
                   <div className="flex items-center p-2 rounded hover:bg-gray-100 ">
-                    <input checked="" id="filter-radio-example-2" type="radio" value="" name="filter-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500  focus:ring-2 " />
+                    <input defaultChecked="" id="filter-radio-example-2" type="radio" value="" name="filter-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500  focus:ring-2 " />
                     <label htmlFor="filter-radio-example-2" className="w-full ms-2 text-sm font-medium text-gray-900 rounded ">Last 7 days</label>
                   </div>
                 </li>
@@ -101,12 +108,12 @@ const Appointments = () => {
           </thead>
           <tbody>
             {appointments.length === 0 ?
-            <>
-              <tr>
-                <td colSpan="3" className=" text-center  py-2">
-                  <img src={noData} className="mx-auto w-96 min-h-[60vh]" alt="no Data" />
-                </td>
-              </tr></> :
+              <>
+                <tr>
+                  <td colSpan="3" className=" text-center  py-2">
+                    <img src={noData} className="mx-auto w-96 min-h-[60vh]" alt="no Data" />
+                  </td>
+                </tr></> :
               appointments?.map((appointment) => {
                 return (
                   <tr key={appointment._id} className="bg-white border-b  hover:bg-gray-50 ">
@@ -117,7 +124,9 @@ const Appointments = () => {
                       {`${appointment.date} ${appointment.time}`}
                     </td>
                     <td className="px-6 py-4">
-                       call
+                      <button className="bg-green-400 px-4 rounded-lg" onClick={() => handleClick(appointment)}>
+                        Call
+                      </button>
                     </td>
                   </tr>)
               })}
