@@ -205,7 +205,7 @@ const Layout = ({ children }) => {
       </aside>
 
       {/* content  */}
-      <div className="p-8 md:p-4   sm:ml-64">
+      <div className="sm:p-8 pt-8  md:p-4 sm:ml-64">
         <div className="md:p-4  mt-14">
           <div className="">{children}</div>
         </div>

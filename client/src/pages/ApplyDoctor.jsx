@@ -232,15 +232,14 @@ const ApplyDoctor = () => {
                                   <option value="11">11</option>
                                   <option value="12">12</option>
                                 </select>
-                                <span className="mr-3 text-xl">:</span>
+                                <span className="text-xl">:</span>
 
                                 <select defaultValue={"00"}
                                   {...register('minutesFrom')}
                                   className="text-sm outline-none appearance-none rounded border-0 bg-white  transition-all duration-150 ease-linear focus:outline-none focus:ring ">
-                                  <option value="00">00</option>
-                                  <option value="30">30</option>
+                                  <option  value="00">00</option>
+                                  <option  value="30">30</option>
                                 </select>
-
                                 <select defaultValue={"AM"}
                                   {...register('ampmFrom')}
                                   className="text-sm outline-none appearance-none rounded border-0 bg-white  transition-all duration-150 ease-linear focus:outline-none focus:ring ">
@@ -271,7 +270,7 @@ const ApplyDoctor = () => {
                                   <option value="11">11</option>
                                   <option value="12">12</option>
                                 </select>
-                                <span className="mr-3 text-lg">:</span>
+                                <span className="text-lg">:</span>
 
                                 <select defaultValue={"00"}
                                   {...register('minutesTo')}

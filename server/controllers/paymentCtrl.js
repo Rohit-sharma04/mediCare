@@ -1,4 +1,6 @@
 import stripe from 'stripe';
+import { bookAppointmnet } from '../lib/BookAppointment.js';
+const endpointSecret = process.env.ENDPOINT_SECRET;
 
 export const createCheckoutSessionController = async (req, res) => {
     try {
@@ -47,3 +49,36 @@ export const createCheckoutSessionController = async (req, res) => {
         res.status(500).json({ error: 'Error creating checkout session' });
     }
 };
+
+export const handleStripeWebhookEvent=async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    let event;
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    } catch (err) {
+      console.log("error = ", err.message)
+      res.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+  
+    // Handle the event
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        const paymentIntentSucceeded = event.data.object;
+        console.log("paymentIntentSucceeded = ", paymentIntentSucceeded)
+        const checkoutSessionData = paymentIntentSucceeded.metadata;
+        console.log("data here = ", checkoutSessionData)
+        try {
+          await bookAppointmnet(checkoutSessionData)
+        } catch (error) {
+          console.log('Error in booking appointment : ', error)
+        }
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+    // Return a 200 response to acknowledge receipt of the event
+    res.send();
+  }
+  

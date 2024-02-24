@@ -111,7 +111,7 @@ const HomePage = () => {
 
                 <input type="search" name="search"
                   value={searchText}
-                  className="max-h-12 max-w-80 pr-8 pl-5 rounded z-0 focus:shadow focus:outline-none" placeholder="Search anything..."
+                  className="max-h-12 max-w-80 pr-8 py-3 pl-5 rounded z-0 focus:shadow focus:outline-none" placeholder="Search anything..."
                   onChange={(e) => setSearchText(e.target.value)}
                 />
                 <div className="absolute top-2.5 right-3">
