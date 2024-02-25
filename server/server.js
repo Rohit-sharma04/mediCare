@@ -39,6 +39,7 @@ nodeMailerConfig()
 //rest obejct 
 const app = express();
 const httpServer = createServer(app);
+app.use(express.json({ limit: '50mb' }));
 
 app.use(cookieParser())
 
@@ -132,7 +133,6 @@ app.use(moragan("dev"));
 
 app.post('/webhook', express.raw({ type: 'application/json' }), handleStripeWebhookEvent);
 
-app.use(express.json({ limit: '50mb' }));
 //routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/admin", adminRoute);
