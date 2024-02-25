@@ -45,7 +45,8 @@ app.use(cookieParser())
 
 //cors
 app.use(cors({
-  origin: [process.env.CLIENT_URL]
+  origin: [process.env.CLIENT_URL],
+  credentials: true
 }))
 
 // Initialize socket.io

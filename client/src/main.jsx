@@ -10,6 +10,7 @@ import "./styles/test.css"
 import SocketProvider from './context/SocketProvider.jsx';
 
 axios.defaults.baseURL = 'https://my-medicare-backend.onrender.com';
+axios.defaults.withCredentials = true;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 
