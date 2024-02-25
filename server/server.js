@@ -16,6 +16,7 @@ import { createServer } from "http";
 // import { initializeSocket } from "./SocketLogic.js";
 import { handleStripeWebhookEvent } from "./controllers/paymentCtrl.js";
 import { Server } from "socket.io";
+import cookieParser from "cookie-parser";
 
 const job = schedule.scheduleJob('0 0 1 * *', function () {
   ScheduleAppointments()
@@ -39,6 +40,8 @@ nodeMailerConfig()
 const app = express();
 const httpServer = createServer(app);
 
+app.use(cookieParser())
+
 //cors
 app.use(cors({
   origin: [process.env.CLIENT_URL]
@@ -57,7 +60,7 @@ io.use((socket, next) => {
   try {
       const { headers } = socket.request;
       const cookies = headers.cookie;
-      console.log(cookies)
+      console.log("cookies",cookies)
       const tokenCookieString = cookies?.split(';').find(str => str.trim().startsWith('token='));
       const token = tokenCookieString?.split('=')[1].trim();
       const payload = JSON.parse(Buffer.from(token?.split('.')[1], 'base64').toString());
