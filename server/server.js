@@ -60,9 +60,9 @@ const io = new Server(httpServer, {
 io.use((socket, next) => {
   try {
       const { headers } = socket.request;
-      console.log("socket ",socket)
-      console.log("socket request ",socket.request)
-      console.log("headers ",headers)
+      // console.log("socket ",socket)
+      // console.log("socket request ",socket.request)
+      // console.log("headers ",headers)
       const cookies = headers.cookie;
       console.log("cookies",cookies)
       const tokenCookieString = cookies?.split(';').find(str => str.trim().startsWith('token='));
@@ -81,6 +81,8 @@ io.use((socket, next) => {
 })
 
 io.on("connection", (socket) => {
+  const cookie = socket.handshake.headers.cookie || socket.request.headers.cookie
+  console.log("cookie from on connection",cookie)
   console.log(`user ${socket.id} Connected to socket.io`)
 
   socket.on("room:joined", (data) => {
