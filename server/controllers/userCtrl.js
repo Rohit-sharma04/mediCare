@@ -201,7 +201,8 @@ export const deleteAllNotificationController = async (req, res) => {
 //GET ALL DOC
 export const getAllDocotrsController = async (req, res) => {
   try {
-
+     const cookie=req.cookies;
+     console.log("cookie from get all doctors=====>>>>",cookie) 
     // const nameRegex = new RegExp(req.body.searchText)
     const doctors = await doctorModel.find({
       firstName: new RegExp(req.body.firstName, 'i'),

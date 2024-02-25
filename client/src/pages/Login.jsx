@@ -23,7 +23,8 @@ const Login = () => {
         //token is stored in local storage , change to cookie
         localStorage.setItem("token", res.data.token);
         // res.cookie('token', res.data.token, { httpOnly: true });
-        Cookies.set('token', res.data.token, { expires: 7, secure: true })
+        // Cookies.set('token', res.data.token, { expires: 7, secure: true })
+        Cookies.set('token', res.data.token, { expires: 7 })
         message.success("Login Successfully");
         navigate("/");
       } else {
