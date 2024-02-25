@@ -8,7 +8,7 @@ const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io(process.env.LOCAL_BACKEND_URL, {
+    const newSocket = io('http://localhost:8080', {
       withCredentials: true,
       reconnection: true,
     });

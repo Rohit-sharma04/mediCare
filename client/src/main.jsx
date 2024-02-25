@@ -9,8 +9,7 @@ import App from './App.jsx';
 import "./styles/test.css"
 import SocketProvider from './context/SocketProvider.jsx';
 
-console.log(process.env.BACKEND_URL)
-axios.defaults.baseURL = process.env.BACKEND_URL;
+axios.defaults.baseURL = 'http://localhost:8080';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 
