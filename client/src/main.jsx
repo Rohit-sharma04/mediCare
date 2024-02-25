@@ -9,7 +9,7 @@ import App from './App.jsx';
 import "./styles/test.css"
 import SocketProvider from './context/SocketProvider.jsx';
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = 'https://my-medicare-backend.onrender.com';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
 

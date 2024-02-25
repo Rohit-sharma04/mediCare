@@ -65,6 +65,7 @@ export const loginController = async (req, res) => {
     const token = jwt.sign({ id: user._id, userName: user.name }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
+    res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'none' }); 
     res.status(200).send({ message: "Login Success", success: true, token });
   } catch (error) {
     console.log(error);
@@ -201,8 +202,8 @@ export const deleteAllNotificationController = async (req, res) => {
 //GET ALL DOC
 export const getAllDocotrsController = async (req, res) => {
   try {
-     const cookie=req.cookies;
-     console.log("cookie from get all doctors=====>>>>",cookie) 
+    const cookie = req.cookies;
+    console.log("cookie from get all doctors=====>>>>", cookie)
     // const nameRegex = new RegExp(req.body.searchText)
     const doctors = await doctorModel.find({
       firstName: new RegExp(req.body.firstName, 'i'),
@@ -306,7 +307,7 @@ export const bookingAvailabilityController = async (req, res) => {
 //user appointment list
 export const userAppointmentsController = async (req, res) => {
   try {
-    const appointments = await appointmentModel.find({userId: req.body.userId});
+    const appointments = await appointmentModel.find({ userId: req.body.userId });
     res.status(200).send({
       success: true,
       message: "Users Appointments Fetch SUccessfully",
