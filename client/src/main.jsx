@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import "antd/dist/reset.css";
 import './index.css'
@@ -9,7 +9,9 @@ import App from './App.jsx';
 import "./styles/test.css"
 import SocketProvider from './context/SocketProvider.jsx';
 
-axios.defaults.baseURL = 'https://my-medicare-backend.onrender.com';
+// 'http://localhost:8080'
+// 
+axios.defaults.baseURL ='https://my-medicare-backend.onrender.com' ;
 axios.defaults.withCredentials = true;
 
 ReactDOM.createRoot(document.getElementById('root')).render(

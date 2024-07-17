@@ -47,10 +47,13 @@ const Doctors = () => {
         }
       );
       if (res.data.success) {
+        await getDoctors();
         message.success(res.data.message);
+        
         // window.location.reload();
       }
     } catch (error) {
+      await getDoctors();
       message.error("Something Went Wrong");
     }
   };
