@@ -6,7 +6,8 @@ export const SocketContext = createContext();
 
 const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
-
+  // 'http://localhost:8080'
+// 
   useEffect(() => {
     const newSocket = io('https://my-medicare-backend.onrender.com', {
       withCredentials: true,
